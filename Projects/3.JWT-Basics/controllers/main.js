@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { BadRequest } = require("../errors");
+const { StatusCodes } = require("http-status-codes");
 
 const login = async (req, res) => {
   const { username, password } = req.body;
@@ -10,12 +11,12 @@ const login = async (req, res) => {
   const token = jwt.sign({ id, username }, process.env.JWT_SECRET_KEY, {
     expiresIn: "1h",
   });
-  res.status(200).send({ msg: "User Created", token });
+  res.status(StatusCodes.OK).send({ msg: "User Created", token });
 };
 
 const dashboard = async (req, res) => {
   const luckyNumber = Math.ceil(Math.random() * 100);
-  res.status(200).send({
+  res.status(StatusCodes.OK).send({
     msg: `Hi ${req.user.username}!`,
     secret: `Your lucky number is ${luckyNumber}`,
   });
