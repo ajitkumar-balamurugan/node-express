@@ -8,7 +8,8 @@ const register = async (req, res) => {
   // const hashedPassword = await bcrypt.hash(password, 10);
   // const tempUser = { name, email, password: hashedPassword };
   const user = await User.create({ ...req.body });
-  res.status(StatusCodes.CREATED).json({ user });
+  const token = user.createJWT();
+  res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token });
 };
 const login = async (req, res) => {
   res.send("Login User");
