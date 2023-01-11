@@ -1,5 +1,11 @@
 require("dotenv").config();
 require("express-async-errors");
+//Security Packages
+const helmet = require("helmet");
+const cors = require("cors");
+const xss = require("xss-clean");
+const rateLimiter = require("express-rate-limit");
+
 const express = require("express");
 const app = express();
 const authRoutes = require("./routes/auth");
@@ -13,6 +19,16 @@ const authMiddleware = require("./middleware/authentication");
 
 app.use(express.json());
 // extra packages
+app.set("trust proxy", 1); //for rateLimiter
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+  })
+);
+app.use(helmet());
+app.use(cors());
+app.use(xss());
 
 // routes
 app.use("/api/v1/auth", authRoutes);
@@ -25,7 +41,7 @@ const port = process.env.PORT || 3000;
 
 const start = async () => {
   try {
-    await connectDB("mongodb://127.0.0.1:27017/test");
+    await connectDB(process.env.MONGO_URI);
     app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`)
     );
