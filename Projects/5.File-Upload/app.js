@@ -2,6 +2,13 @@ require("dotenv").config();
 require("express-async-errors");
 const routes = require("./routes/productRoutes");
 
+const cloudinary = require("cloudinary");
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
 const express = require("express");
 const app = express();
 const fileUpload = require("express-fileupload");
@@ -15,7 +22,7 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 
 app.use(express.static("./public"));
 app.use(express.json());
-app.use(fileUpload());
+app.use(fileUpload({ useTempFiles: true }));
 
 app.get("/", (req, res) => {
   res.send("<h1>File Upload Starter</h1>");
